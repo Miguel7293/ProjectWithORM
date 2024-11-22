@@ -13,16 +13,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Books{//modificar aqui, este es un ejemplo
-  id  Int @id @default(autoincrement())
-  name String @unique
-  price Int @default(99)
-  genero Genero @relation(fields: [generoId],references: [id])
-  generoId Int
+model Usuarios {
+  id_usuario    Int       @id @default(autoincrement())
+  nombre        String
+  apellido      String
+  codigo_tarjeta String   @unique
+  contrasena    String
+  saldo         Float     @default(0.00)
+  transacciones Transacciones[]
 }
 
-model Genero{
-  id Int @id @default(autoincrement())
-  name String @unique
-  libros Books[]
+model Generos {
+  id_genero    Int      @id @default(autoincrement())
+  nombre_genero String   @unique
+  libros       Libros[]
+}
+
+model Libros {
+  id_libro   Int       @id @default(autoincrement())
+  titulo     String
+  autor      String
+  precio     Float
+  id_genero  Int
+  genero     Generos   @relation(fields: [id_genero], references: [id_genero])
+  transacciones Transacciones[]
+}
+
+model Transacciones {
+  id_transaccion Int      @id @default(autoincrement())
+  id_usuario     Int
+  id_libro       Int
+  fecha_compra   DateTime @default(now())
+  usuario        Usuarios @relation(fields: [id_usuario], references: [id_usuario])
+  libro          Libros   @relation(fields: [id_libro], references: [id_libro])
 }
