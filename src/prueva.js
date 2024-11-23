@@ -13,7 +13,7 @@ import {
       const usuario1 = await crearUsuario({
         nombre: 'Juan',
         apellido: 'Pérez',
-        codigoTarjeta: '1234-5678-9012-3456',
+        codigoTarjeta: '1234-5678-9012-3481',
         contrasena: 'password123',
         saldo: 500.0
       });
@@ -22,7 +22,7 @@ import {
       const usuario2 = await crearUsuario({
         nombre: 'Ana',
         apellido: 'García',
-        codigoTarjeta: '9876-5432-1098-7654',
+        codigoTarjeta: '9876-5432-1098-7659',
         contrasena: 'securepass456',
         saldo: 300.0
       });
@@ -45,8 +45,8 @@ import {
   
       // *** GENEROS ***
       console.log('1. Insertar géneros:');
-      const genero1 = await crearGenero('Ficción');
-      const genero2 = await crearGenero('Ciencia');
+      const genero1 = await crearGenero('Ficción4');
+      const genero2 = await crearGenero('Ciencia4');
       console.log('Géneros creados:', [genero1, genero2]);
   
       console.log('2. Obtener géneros:');
@@ -55,7 +55,7 @@ import {
       // *** LIBROS ***
       console.log('1. Insertar libros:');
       const libro1 = await crearLibro({
-        titulo: 'El Principito',
+        titulo: 'El Principito3',
         autor: 'Antoine de Saint-Exupéry',
         precio: 50.0,
         id_genero: genero1.id_genero
@@ -64,7 +64,7 @@ import {
   
       const libro2 = await crearLibro({
         titulo: 'Breve historia del tiempo',
-        autor: 'Stephen Hawking',
+        autor: 'Stephen Hawking2',
         precio: 100.0,
         id_genero: genero2.id_genero
       });
