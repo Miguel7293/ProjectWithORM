@@ -87,7 +87,7 @@ export const crearLibro = async ({ titulo, autor, precio, id_genero }) => {
  */
 export const obtenerLibros = async () => {
   return await prisma.libros.findMany({
-    include: { generos: true }, // Incluye datos del género relacionado
+    include: { genero: true }, // Incluye datos del género relacionado
   });
 };
 
@@ -114,6 +114,7 @@ export const actualizarLibro = async (id_libro, datosActualizados) => {
 /**
  * Eliminar un libro.
  */
+
 export const eliminarLibro = async (id_libro) => {
   return await prisma.libros.delete({
     where: { id_libro },
