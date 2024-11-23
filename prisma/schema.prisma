@@ -17,11 +17,13 @@ model Usuarios {
   id_usuario    Int       @id @default(autoincrement())
   nombre        String
   apellido      String
+  correo        String   @unique
   codigo_tarjeta String   @unique
   contrasena    String
   saldo         Float     @default(0.00)
   transacciones Transacciones[]
 }
+
 
 model Generos {
   id_genero    Int      @id @default(autoincrement())

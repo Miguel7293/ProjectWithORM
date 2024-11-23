@@ -14,6 +14,7 @@ async function inicializarBaseDeDatos() {
         data: {
           nombre: `Usuario${i}`,
           apellido: `Apellido${i}`,
+          correo: `usuario${i}@example.com`, // Correo electrónico único para cada usuario
           codigo_tarjeta: `1234-5678-9012-${1000 + i}`,
           contrasena: `password${i}`,
           saldo: Math.random() * 5000 + 50, // Saldo aleatorio entre 50 y 550

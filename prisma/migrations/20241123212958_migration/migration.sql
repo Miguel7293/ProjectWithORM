@@ -3,6 +3,7 @@ CREATE TABLE "Usuarios" (
     "id_usuario" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
     "apellido" TEXT NOT NULL,
+    "correo" TEXT NOT NULL,
     "codigo_tarjeta" TEXT NOT NULL,
     "contrasena" TEXT NOT NULL,
     "saldo" REAL NOT NULL DEFAULT 0.00
@@ -33,6 +34,9 @@ CREATE TABLE "Transacciones" (
     CONSTRAINT "Transacciones_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "Usuarios" ("id_usuario") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Transacciones_id_libro_fkey" FOREIGN KEY ("id_libro") REFERENCES "Libros" ("id_libro") ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Usuarios_correo_key" ON "Usuarios"("correo");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Usuarios_codigo_tarjeta_key" ON "Usuarios"("codigo_tarjeta");
