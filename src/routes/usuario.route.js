@@ -19,4 +19,19 @@ router.post('/usuarios', async (req, res) => {
   res.json(nuevoUsuario);
 });
 
+// Comprobar login
+router.post('/usuarios/login', async (req, res) => {
+  const { codigo_tarjeta, contrasena } = req.body;
+
+  const usuario = await prisma.usuarios.findUnique({
+    where: { codigo_tarjeta },
+  });
+
+  if (!usuario || usuario.contrasena !== contrasena) {
+    return res.status(401).json({ error: 'Credenciales incorrectas' });
+  }
+
+  res.json({ message: 'Inicio de sesión exitoso', usuario });
+});
+
 export default router;
