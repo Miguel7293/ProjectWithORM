@@ -54,3 +54,61 @@ export const getLibros = async () => {
       throw error;  // Propaga el error para que pueda ser manejado en el componente
     }
   };
+
+  export const getTransaccionesUsuario = async (idUsuario, estado) => {
+    try {
+      const response = await axiosInstance.get(`/api/transacciones/${idUsuario}`, {
+        params: { estado }, // Pasamos el estado como parámetro
+      });
+      return response.data;  // Retorna las transacciones obtenidas
+    } catch (error) {
+      throw error;  // Propaga el error para manejarlo en el componente
+    }
+  };
+  export const crearTransaccion = async (idUsuario, idLibro) => {
+    try {
+      const response = await axiosInstance.post('/api/transacciones', {
+        id_usuario: idUsuario,
+        id_libro: idLibro,
+      });
+      return response.data;  // Retorna la transacción creada
+    } catch (error) {
+      throw error;  // Propaga el error para manejarlo en el componente
+    }
+  };
+
+  export const eliminarTransaccion = async (idTransaccion) => {
+    try {
+      const response = await axiosInstance.delete(`/api/transacciones/${idTransaccion}`);
+      return response.data;  // Retorna la respuesta del servidor
+    } catch (error) {
+      throw error;  // Propaga el error para manejarlo en el componente
+    }
+  };
+
+  export const completarPago = async (idUsuario) => {
+    try {
+      const response = await axiosInstance.post('/api/transacciones/PagoCompletado', {
+        id_usuario: idUsuario,
+      });
+      return response.data;  // Retorna la respuesta del servidor
+    } catch (error) {
+      throw error;  // Propaga el error para manejarlo en el componente
+    }
+  };
+  export const reducirCantidadLibro = async (idLibro) => {
+    try {
+      const response = await axiosInstance.put(`/api/libros/reducir/${idLibro}`);
+      return response.data;  // Retorna el libro actualizado
+    } catch (error) {
+      throw error;  // Propaga el error para manejarlo en el componente
+    }
+  };
+  export const incrementarCantidadLibro = async (idLibro) => {
+    try {
+      const response = await axiosInstance.put(`/api/libros/incrementar/${idLibro}`);
+      return response.data;  // Retorna el libro actualizado
+    } catch (error) {
+      throw error;  // Propaga el error para manejarlo en el componente
+    }
+  };

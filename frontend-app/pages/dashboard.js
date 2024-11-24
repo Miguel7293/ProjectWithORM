@@ -1,40 +1,108 @@
 import { useEffect, useState } from 'react';
-import { getLibros } from '../services/api';  // Importa la función para obtener libros
+import {
+  getLibros,
+  getTransaccionesUsuario as getTransacciones,
+  crearTransaccion as postTransaccion,
+  eliminarTransaccion as deleteTransaccion,
+  completarPago as pagarTransacciones,
+} from '../services/api'; // Funciones de API
 
 const Dashboard = () => {
+  const [idUsuario, setIdUsuario] = useState(null);
   const [libros, setLibros] = useState([]);
   const [error, setError] = useState('');
-  const [carrito, setCarrito] = useState([]);  // Estado para el carrito
+  const [carrito, setCarrito] = useState([]); // Estado para las transacciones del carrito
   const [mostrarCarrito, setMostrarCarrito] = useState(false); // Estado para mostrar el carrito
 
-  // Obtener los libros cuando el componente se monta
+  // Obtener el ID del usuario logueado
+  useEffect(() => {
+    const storedId = localStorage.getItem('id_usuario');
+    if (storedId) {
+      setIdUsuario(Number(storedId)); // Convertir a número
+    } else {
+      setError('No se encontró el usuario logueado.');
+    }
+  }, []);
+
+  // Obtener los libros disponibles
   useEffect(() => {
     const fetchLibros = async () => {
       try {
         const data = await getLibros();
-        setLibros(data);  // Almacena los libros en el estado
+        setLibros(data);
       } catch (err) {
-        setError('Error al cargar los libros');
+        setError('Error al cargar los libros.');
       }
     };
 
     fetchLibros();
   }, []);
 
-  // Función para agregar un libro al carrito
-  const agregarAlCarrito = (libro) => {
-    setCarrito([...carrito, libro]);
+  // Obtener transacciones pendientes del usuario
+  const fetchTransacciones = async () => {
+    if (!idUsuario) return;
+
+    try {
+      const data = await getTransacciones(idUsuario, 'PENDIENTE'); // Pasa el estado "PENDIENTE"
+      setCarrito(data);
+    } catch (err) {
+      setError('Error al cargar las transacciones.');
+    }
   };
 
-  // Función para eliminar un libro del carrito
-  const eliminarDelCarrito = (idLibro) => {
-    setCarrito(carrito.filter(libro => libro.id_libro !== idLibro));
+  // Agregar un libro al carrito
+  const agregarAlCarrito = async (libro) => {
+    if (!idUsuario) return;
+
+    try {
+      // Asegurarse de que el libro tiene cantidad disponible
+      if (libro.cantidad <= 0) {
+        setError('No hay suficiente cantidad de este libro.');
+        return;
+      }
+
+      await postTransaccion(idUsuario, libro.id_libro);
+      // Reducir la cantidad del libro seleccionado
+      setLibros((prevLibros) =>
+        prevLibros.map((l) =>
+          l.id_libro === libro.id_libro ? { ...l, cantidad: l.cantidad - 1 } : l
+        )
+      );
+      fetchTransacciones(); // Actualizar las transacciones pendientes
+    } catch (err) {
+      setError('Error al agregar el libro al carrito.');
+    }
   };
 
-  // Función para manejar la acción de compra
-  const comprar = () => {
-    alert('¡Compra realizada!');
-    setCarrito([]);  // Vaciar el carrito después de la compra
+  // Eliminar una transacción pendiente del carrito
+  const eliminarDelCarrito = async (idTransaccion, idLibro) => {
+    if (!idUsuario) return;
+
+    try {
+      await deleteTransaccion(idTransaccion);
+      // Aumentar la cantidad del libro asociado
+      setLibros((prevLibros) =>
+        prevLibros.map((l) =>
+          l.id_libro === idLibro ? { ...l, cantidad: l.cantidad + 1 } : l
+        )
+      );
+      fetchTransacciones(); // Actualizar las transacciones pendientes
+    } catch (err) {
+      setError('Error al eliminar el libro del carrito.');
+    }
+  };
+
+  // Finalizar la compra
+  const comprar = async () => {
+    if (!idUsuario) return;
+
+    try {
+      await pagarTransacciones(idUsuario);
+      alert('¡Compra realizada con éxito!');
+      fetchTransacciones(); // Actualizar las transacciones después del pago
+    } catch (err) {
+      setError('Error al realizar la compra.');
+    }
   };
 
   return (
@@ -45,7 +113,6 @@ const Dashboard = () => {
 
       <h2 className="text-xl font-semibold mb-4">Libros disponibles</h2>
 
-      {/* Grid para mostrar los libros, hasta 4 libros por columna */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {libros.length === 0 ? (
           <p>No hay libros disponibles.</p>
@@ -54,11 +121,11 @@ const Dashboard = () => {
             <div
               key={libro.id_libro}
               className="border p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer"
-              onClick={() => agregarAlCarrito(libro)} // Se agrega al carrito al hacer clic en el libro
+              onClick={() => agregarAlCarrito(libro)}
             >
               <div className="bg-gray-300 mb-4 h-48 rounded-lg overflow-hidden">
                 <img
-                  src={`http://localhost:3000${libro.imagen_url}`}  // Ruta de la imagen
+                  src={`http://localhost:3000${libro.imagen_url}`}
                   alt={libro.titulo}
                   className="w-full h-full object-cover"
                 />
@@ -66,34 +133,36 @@ const Dashboard = () => {
               <div className="text-center">
                 <p className="font-bold text-lg">{libro.titulo}</p>
                 <p className="text-sm text-gray-600 mt-2">{libro.precio} USD</p>
+                <p className="text-xs text-gray-500">Cantidad disponible: {libro.cantidad}</p>
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Botón de carrito en la parte superior derecha */}
       <button
-        onClick={() => setMostrarCarrito(!mostrarCarrito)}
+        onClick={() => {
+          setMostrarCarrito(!mostrarCarrito);
+          if (!mostrarCarrito) fetchTransacciones(); // Actualizar transacciones al abrir el carrito
+        }}
         className="absolute top-8 right-8 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
       >
         Carrito ({carrito.length})
       </button>
 
-      {/* Mostrar el carrito si está visible */}
       {mostrarCarrito && (
         <div className="absolute top-16 right-8 bg-white border p-4 w-80 shadow-lg rounded-lg">
           <h3 className="font-bold text-lg mb-4">Carrito</h3>
           {carrito.length === 0 ? (
-            <p>No hay libros en el carrito.</p>
+            <p>No hay transacciones pendientes.</p>
           ) : (
             <div>
               <ul>
-                {carrito.map((libro) => (
-                  <li key={libro.id_libro} className="flex justify-between items-center mb-2">
-                    <p>{libro.titulo}</p>
+                {carrito.map((transaccion) => (
+                  <li key={transaccion.id_transaccion} className="flex justify-between items-center mb-2">
+                    <p>{transaccion.libro.titulo}</p>
                     <button
-                      onClick={() => eliminarDelCarrito(libro.id_libro)}
+                      onClick={() => eliminarDelCarrito(transaccion.id_transaccion, transaccion.id_libro)}
                       className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                     >
                       Eliminar

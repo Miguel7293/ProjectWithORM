@@ -9,18 +9,18 @@ const prisma = new PrismaClient();
 const obtenerImagenPorDefecto = (nombreGenero) => {
   const imagenesPorDefecto = {
     "Ficción": "ficcionDefault.jpeg",
-    "Ciencia": "cienciaDefault.jpg",
-    "Fantasía": "fantasiaDefault.jpeg",
-    "Misterio": "misteryDefault.jpg",
-    "Romance": "romanceDefault.jpg",
-    "Historia": "historiaDefault.jpg",
-    "Cómics": "comicsDefault.jpg",
-    "Terror": "terrorDefault.jpg",
-    "Autoayuda": "autoayudaDefault.jpg",
-    "Anime": "animeDefault.jpg",
+    "Ciencia": "ficcionDefault.jpeg",
+    "Fantasía": "ficcionDefault.jpeg",
+    "Misterio": "ficcionDefault.jpeg",
+    "Romance": "ficcionDefault.jpeg",
+    "Historia": "ficcionDefault.jpeg",
+    "Cómics": "ficcionDefault.jpeg",
+    "Terror": "ficcionDefault.jpeg",
+    "Autoayuda": "ficcionDefault.jpeg",
+    "Anime": "ficcionDefault.jpeg",
   };
 
-  return imagenesPorDefecto[nombreGenero] || "animeDefault.jpg"; // Retorna una imagen genérica si el género no está definido
+  return imagenesPorDefecto[nombreGenero] || "ficcionDefault.jpg"; // Retorna una imagen genérica si el género no está definido
 };
 
 // Ruta para obtener todos los libros
