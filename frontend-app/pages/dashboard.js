@@ -44,7 +44,11 @@ const Dashboard = () => {
 
     try {
       const data = await getTransacciones(idUsuario, 'PENDIENTE'); // Pasa el estado "PENDIENTE"
-      setCarrito(data);
+      
+      // Filtrar las transacciones para excluir las que están en estado CANCELADO
+      const transaccionesFiltradas = data.filter((transaccion) => transaccion.estado !== 'CANCELADO');
+      
+      setCarrito(transaccionesFiltradas);
     } catch (err) {
       setError('Error al cargar las transacciones.');
     }
@@ -97,11 +101,25 @@ const Dashboard = () => {
     if (!idUsuario) return;
 
     try {
-      await pagarTransacciones(idUsuario);
-      alert('¡Compra realizada con éxito!');
-      fetchTransacciones(); // Actualizar las transacciones después del pago
+      // Llamada a la API para procesar el pago y actualizar las transacciones
+      const response = await pagarTransacciones(idUsuario);
+
+      // Si la compra se realiza con éxito, también actualizamos el carrito
+      // Ya que el estado de las transacciones se cambia a 'CANCELADO' en el backend
+      if (response && response.message === 'Pago completado exitosamente.') {
+        alert('¡Compra realizada con éxito!');
+        
+        // Limpiamos el carrito (vaciar las transacciones pendientes)
+        setCarrito([]);
+
+        // Actualizar las transacciones después del pago
+        fetchTransacciones(); // Actualiza las transacciones pendientes, aunque estén ahora canceladas
+      } else {
+        setError('Hubo un problema con la compra.');
+      }
     } catch (err) {
       setError('Error al realizar la compra.');
+      console.error(err); // Puedes usar esto para obtener más detalles del error
     }
   };
 

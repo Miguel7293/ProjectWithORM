@@ -88,7 +88,7 @@ export const getLibros = async () => {
 
   export const completarPago = async (idUsuario) => {
     try {
-      const response = await axiosInstance.post('/api/transacciones/PagoCompletado', {
+      const response = await axiosInstance.post('/api/transacciones/PagoCompleto', {
         id_usuario: idUsuario,
       });
       return response.data;  // Retorna la respuesta del servidor
