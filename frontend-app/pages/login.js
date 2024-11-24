@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { loginUsuario } from '../services/api'; // Importa la función desde el archivo api.js
 import { useRouter } from 'next/router';
+import '../styles/login.prueba.css';
 
 const Login = () => {
   const [correo, setCorreo] = useState('');

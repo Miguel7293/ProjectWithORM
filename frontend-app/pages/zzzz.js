@@ -102,14 +102,15 @@ const Dashboard = () => {
       setError('Error al realizar la compra.');
     }
   };
+
   return (
     <div className="dashboard">
       <h1 className="title">BOOKstore</h1>
-  
+
       {error && <div className="error">{error}</div>}
-  
+
       <h2 className="subtitle">Libros disponibles</h2>
-  
+
       <div className="gallery">
         {libros.length === 0 ? (
           <p className="empty">No hay libros disponibles.</p>
@@ -120,13 +121,11 @@ const Dashboard = () => {
               className="gallery-item"
               onClick={() => agregarAlCarrito(libro)}
             >
-              <div className="img-container">
-                <img
-                  src={`http://localhost:3000${libro.imagen_url}`}
-                  alt={libro.titulo}
-                  className="gallery-img"
-                />
-              </div>
+              <img
+                src={`http://localhost:3000${libro.imagen_url}`}
+                alt={libro.titulo}
+                className="gallery-img"
+              />
               <div className="gallery-info">
                 <p className="title">{libro.titulo}</p>
                 <p className="price">{libro.precio} USD</p>
@@ -136,7 +135,7 @@ const Dashboard = () => {
           ))
         )}
       </div>
-  
+
       <button
         onClick={() => {
           setMostrarCarrito(!mostrarCarrito);
@@ -146,7 +145,7 @@ const Dashboard = () => {
       >
         Carrito ({carrito.length})
       </button>
-  
+
       {mostrarCarrito && (
         <div className="cart">
           <h3>Carrito</h3>
@@ -156,7 +155,7 @@ const Dashboard = () => {
             <div>
               <ul>
                 {carrito.map((transaccion) => (
-                  <li key={transaccion.id_transaccion} className="cart-item">
+                  <li key={transaccion.id_transaccion}>
                     <p>{transaccion.libro.titulo}</p>
                     <button
                       onClick={() =>
@@ -172,18 +171,15 @@ const Dashboard = () => {
                   </li>
                 ))}
               </ul>
-              <div className="checkout-btn-container">
-                <button onClick={comprar} className="checkout-btn">
-                  Comprar
-                </button>
-              </div>
+              <button onClick={comprar} className="checkout-btn">
+                Comprar
+              </button>
             </div>
           )}
         </div>
       )}
     </div>
   );
-  
 };
 
 export default Dashboard;
