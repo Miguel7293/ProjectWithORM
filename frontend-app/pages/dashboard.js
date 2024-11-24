@@ -58,7 +58,7 @@ const Dashboard = () => {
             >
               <div className="bg-gray-300 mb-4 h-48 rounded-lg overflow-hidden">
                 <img
-                  src={libro.imagen_url}  // Ruta de la imagen
+                  src={`http://localhost:3000${libro.imagen_url}`}  // Ruta de la imagen
                   alt={libro.titulo}
                   className="w-full h-full object-cover"
                 />

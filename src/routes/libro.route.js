@@ -6,7 +6,7 @@ const router = Router();
 const prisma = new PrismaClient();
 
 // Función para obtener la imagen por defecto según el género
-const obtenerImagenPorDefecto = (genero) => {
+const obtenerImagenPorDefecto = (nombreGenero) => {
   const imagenesPorDefecto = {
     "Ficción": "ficcionDefault.jpeg",
     "Ciencia": "cienciaDefault.jpg",
@@ -17,34 +17,35 @@ const obtenerImagenPorDefecto = (genero) => {
     "Cómics": "comicsDefault.jpg",
     "Terror": "terrorDefault.jpg",
     "Autoayuda": "autoayudaDefault.jpg",
-    "Anime": "animeDefault.jpg"
+    "Anime": "animeDefault.jpg",
   };
 
-  return imagenesPorDefecto[genero] || null;  // Retorna null si no se encuentra el género
+  return imagenesPorDefecto[nombreGenero] || "animeDefault.jpg"; // Retorna una imagen genérica si el género no está definido
 };
 
-// Ruta para obtener todos los libros con su género
+// Ruta para obtener todos los libros
 router.get('/libros', async (req, res) => {
   try {
     const libros = await prisma.libros.findMany({
-      include: { genero: true },
+      include: { genero: true }, // Incluye el género relacionado
     });
 
-    // Modificar los libros para incluir la imagen por defecto si no tienen una URL
     const librosConImagen = libros.map(libro => {
       if (!libro.imagen_url) {
-        // Asignar imagen por defecto según el género
-        const imagenPorDefecto = obtenerImagenPorDefecto(libro.genero?.nombre);
-        libro.imagen_url = imagenPorDefecto ? `/img/${imagenPorDefecto}` : null;
+        // Asignar una imagen por defecto basada en el género
+        const imagenPorDefecto = obtenerImagenPorDefecto(libro.genero.nombre_genero);
+        libro.imagen_url = `/img/${imagenPorDefecto}`;
       }
       return libro;
     });
 
-    res.json(librosConImagen);
+    res.json(librosConImagen); // Envía los libros al frontend
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Error al obtener los libros' });
   }
 });
+
 
 // Crear un nuevo libro
 router.post('/libros', async (req, res) => {
@@ -111,6 +112,26 @@ router.delete('/libros/multiples', async (req, res) => {
     res.status(500).json({ error: 'Ocurrió un error al eliminar los libros.' });
   }
 });
+
+
+// Ruta para actualizar el URL de la imagen de un libro
+router.put('/libros/:id', async (req, res) => {
+  const { id } = req.params;
+  const { imagen_url } = req.body;
+
+  try {
+    const libroActualizado = await prisma.libros.update({
+      where: { id_libro: parseInt(id) },
+      data: { imagen_url },
+    });
+
+    res.json(libroActualizado);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar el libro' });
+  }
+});
+
 
 export default router;
 
