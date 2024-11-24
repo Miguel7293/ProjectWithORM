@@ -10,7 +10,7 @@ import path from 'path';
 const app = express();
 
 const __dirname = new URL('.', import.meta.url).pathname;
-app.use('/img', express.static(path.join(__dirname, 'img')));
+
 
 // Configurar CORS
 app.use(cors({
@@ -26,6 +26,7 @@ app.use('/api', usuarioRoutes);
 app.use('/api', libroRoutes);
 app.use('/api', transaccionRoutes);
 app.use('/api', generoRoutes);
+app.use('/img', express.static(path.join(__dirname, 'public', 'img')));
 
 const PORT = process.env.PORT || 3000;
 

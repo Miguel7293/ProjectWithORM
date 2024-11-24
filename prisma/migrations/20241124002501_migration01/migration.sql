@@ -21,7 +21,7 @@ CREATE TABLE "Libros" (
     "titulo" TEXT NOT NULL,
     "autor" TEXT NOT NULL,
     "precio" REAL NOT NULL,
-    "cantidad" INTEGER NOT NULL,
+    "cantidad" INTEGER NOT NULL DEFAULT 0,
     "imagen_url" TEXT NOT NULL,
     "id_genero" INTEGER NOT NULL,
     CONSTRAINT "Libros_id_genero_fkey" FOREIGN KEY ("id_genero") REFERENCES "Generos" ("id_genero") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -33,6 +33,7 @@ CREATE TABLE "Transacciones" (
     "id_usuario" INTEGER NOT NULL,
     "id_libro" INTEGER NOT NULL,
     "fecha_compra" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "estado" TEXT NOT NULL,
     CONSTRAINT "Transacciones_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "Usuarios" ("id_usuario") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Transacciones_id_libro_fkey" FOREIGN KEY ("id_libro") REFERENCES "Libros" ("id_libro") ON DELETE RESTRICT ON UPDATE CASCADE
 );
