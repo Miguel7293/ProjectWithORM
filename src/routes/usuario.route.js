@@ -38,7 +38,7 @@ router.post('/usuarios/login', async (req, res) => {
     return res.status(401).json({ error: 'Correo o contraseña incorrectos' });
   }
 
-  res.json({ message: 'Inicio de sesión exitoso', usuario });
+  res.json({ message: 'Inicio de sesión exitoso jeje', usuario });
 });
 
 export default router;
