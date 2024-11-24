@@ -21,6 +21,8 @@ CREATE TABLE "Libros" (
     "titulo" TEXT NOT NULL,
     "autor" TEXT NOT NULL,
     "precio" REAL NOT NULL,
+    "cantidad" INTEGER NOT NULL,
+    "imagen_url" TEXT NOT NULL,
     "id_genero" INTEGER NOT NULL,
     CONSTRAINT "Libros_id_genero_fkey" FOREIGN KEY ("id_genero") REFERENCES "Generos" ("id_genero") ON DELETE RESTRICT ON UPDATE CASCADE
 );

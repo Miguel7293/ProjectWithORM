@@ -32,12 +32,14 @@ model Generos {
 }
 
 model Libros {
-  id_libro   Int       @id @default(autoincrement())
-  titulo     String
-  autor      String
-  precio     Float
-  id_genero  Int
-  genero     Generos   @relation(fields: [id_genero], references: [id_genero])
+  id_libro      Int           @id @default(autoincrement())
+  titulo        String
+  autor         String
+  precio        Float
+  cantidad      Int       @default(0)
+  imagen_url    String
+  id_genero     Int
+  genero        Generos       @relation(fields: [id_genero], references: [id_genero])
   transacciones Transacciones[]
 }
 
@@ -46,6 +48,7 @@ model Transacciones {
   id_usuario     Int
   id_libro       Int
   fecha_compra   DateTime @default(now())
+  estado         String
   usuario        Usuarios @relation(fields: [id_usuario], references: [id_usuario])
   libro          Libros   @relation(fields: [id_libro], references: [id_libro])
 }
